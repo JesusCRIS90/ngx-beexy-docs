@@ -1,0 +1,9 @@
+<div class="bee-sidebar-layout">
+    <aside class="sidebar" [style.width]="sidebarWidth">
+        <ng-content select="[sidebar]"/>
+    </aside>
+
+    <main class="content">
+        <ng-content />
+    </main>
+</div>

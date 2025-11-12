@@ -1,0 +1,19 @@
+.bee-sidebar-layout {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+
+  .sidebar {
+    background: #f4f4f4;
+    border-right: 1px solid #ddd;
+    transition: width 0.3s ease;
+    position: relative;
+  }
+
+  .content {
+    flex-grow: 1;
+    background: #fff;
+    overflow-y: auto;
+  }
+}
