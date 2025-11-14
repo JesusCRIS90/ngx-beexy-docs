@@ -1,9 +1,12 @@
 <div class="bee-sidebar-layout">
-    <aside class="sidebar" [style.width]="sidebarWidth">
-        <ng-content select="[sidebar]"/>
-    </aside>
+  <aside class="bee-sidebar" [style.width]="sidebarWidth">
+    <ng-content select="[sidebar]" />
 
-    <main class="content">
-        <ng-content />
-    </main>
+    <!-- Drag Handle -->
+    <div class="bee-resize-handle" (mousedown)="onMouseDown($event)" title="Drag to Resize"></div>
+  </aside>
+
+  <main class="bee-content">
+    <ng-content />
+  </main>
 </div>

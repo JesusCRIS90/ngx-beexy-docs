@@ -4,14 +4,33 @@
   width: 100%;
   overflow: hidden;
 
-  .sidebar {
+  .bee-sidebar {
     background: #f4f4f4;
     border-right: 1px solid #ddd;
-    transition: width 0.3s ease;
+    /* transition: width 0.15s ease; */
     position: relative;
+    display: flex;
+    flex-direction: column;
+
+    /* === Drag handle === */
+    .bee-resize-handle {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 5px;
+      height: 100%;
+      cursor: col-resize;
+
+      background: transparent;
+      transition: background 0.2s;
+    }
+
+    .bee-resize-handle:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
   }
 
-  .content {
+  .bee-content {
     flex-grow: 1;
     background: #fff;
     overflow-y: auto;
