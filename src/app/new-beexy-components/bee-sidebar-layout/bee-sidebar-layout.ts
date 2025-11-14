@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'bee-sidebar-layout',
@@ -6,6 +6,7 @@ import { Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
   templateUrl: './bee-sidebar-layout.html',
   styleUrl: './bee-sidebar-layout.css',
   standalone: true,
+  encapsulation: ViewEncapsulation.None,
 })
 export class BeeSidebarLayout implements OnInit, OnDestroy {
   @Input() MaxWidth: number = 30;
@@ -69,8 +70,6 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   // =========================
 
   onMouseDown(event: MouseEvent) {
-    // console.log(`[onMouseDown]: ${event.clientX}`);
-
     this.isDragging = true;
     this.mouseFirstClick_X = event.clientX;
     this.onClickMouseFirstWidth = this.currentWidth();
@@ -88,8 +87,6 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   onMouseMove(event: MouseEvent) {
     if (!this.isDragging) return;
 
-    // console.log(`[onMouseMOve]: ${event.clientX}`);
-
     // Calculate Mouse 'Shifting' in Pixels
     const deltaX = event.clientX - this.mouseFirstClick_X;
     const newWidth = this.onClickMouseFirstWidth + deltaX;
@@ -106,9 +103,9 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   }
 
   onMouseUp() {
+    
     this.updateCurrentWidthPercentage();
 
-    console.log(this.currentWidthPercentage);
     this.isDragging = false;
     document.removeEventListener('mousemove', this.moveMouseListener);
     document.removeEventListener('mouseup', this.upMouseListener);
