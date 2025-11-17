@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { Component, computed, Input, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
 
 @Component({
   selector: 'bee-sidebar-layout',
@@ -13,6 +13,11 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   @Input() MinWidth: number = 10;
 
   currentWidth = signal<number>(0);
+
+  isCollapsed = computed(() => {
+    return this.isCurrentWidthMinimum();
+  });
+
   private currentWidthPercentage = this.MaxWidth;
 
   private isDragging = false;
@@ -41,6 +46,10 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     return `${this.currentWidth()}px`;
   }
 
+  get IsCollapsed(): boolean {
+    return this.isCollapsed();
+  }
+
   private onResizeTrigger(): void {
     
     const screenWidth = window.innerWidth;
@@ -63,6 +72,14 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     const newPercentage = ( 1 - ( (screenWidth - this.currentWidth()) / screenWidth) ) * 100;
 
     this.currentWidthPercentage = Math.round( newPercentage * 100 ) / 100;  
+  }
+
+  private isCurrentWidthMinimum(): boolean {
+    
+    const screenWidth = window.innerWidth;
+    const sideBarWidthPercentage = ( 1 - ( (screenWidth - this.currentWidth()) / screenWidth) ) * 100;
+    
+    return ( Math.round( sideBarWidthPercentage * 100 ) / 100 )  <= this.MinWidth;
   }
 
   // =========================
@@ -105,6 +122,8 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   onMouseUp() {
     
     this.updateCurrentWidthPercentage();
+
+    // console.log( this.IsCollapsed );
 
     this.isDragging = false;
     document.removeEventListener('mousemove', this.moveMouseListener);
