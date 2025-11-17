@@ -4,3 +4,38 @@ body{
     margin: 0;
     padding: 0;
 }
+
+
+.custom-sidebar-1 {
+  .bee-sidebar-layout {
+    .bee-sidebar {
+      background: #fcacac;
+      border-right: 1px solid #ddd;
+    }
+
+    .bee-resize-handle:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .bee-content {
+      background: #b3e5f5;
+    }
+  }
+}
+
+.custom-sidebar-2 {
+  .bee-sidebar-layout {
+    .bee-sidebar {
+      background: #d7fcac;
+      border-right: 1px solid #ddd;
+    }
+
+    .bee-resize-handle:hover {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .bee-content {
+      background: #004258;
+    }
+  }
+}
