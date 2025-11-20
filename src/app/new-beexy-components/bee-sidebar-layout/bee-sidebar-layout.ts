@@ -11,6 +11,7 @@ import {
 
 export interface SidebarLayoutState {
   width: number;
+  widthPercentage: number,
   isCollapsed: boolean;
 }
 
@@ -96,6 +97,7 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   private triggerSudebarState() {
     this.sidebarWidthChange.emit({
       width: this.currentWidth(),
+      widthPercentage: this.currentWidthPercentage,
       isCollapsed: this.isCollapsed(),
     });
   }
