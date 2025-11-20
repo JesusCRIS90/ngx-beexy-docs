@@ -1,4 +1,12 @@
-import { Component, computed, Input, OnDestroy, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import {
+  Component,
+  computed,
+  Input,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewEncapsulation,
+} from '@angular/core';
 
 @Component({
   selector: 'bee-sidebar-layout',
@@ -13,16 +21,16 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   @Input() MinWidth: number = 10;
 
   currentWidth = signal<number>(0);
-
-  isCollapsed = computed(() => {
-    return this.isCurrentWidthMinimum();
-  });
+  isCollapsed = signal<boolean>(false);
 
   private currentWidthPercentage = this.MaxWidth;
+  private previousWidthValue = 0;
 
   private isDragging = false;
   private mouseFirstClick_X = 0;
   private onClickMouseFirstWidth = 0;
+  private maxWidthValue: number = 0;
+  private minWidthValue: number = 0;
 
   private resizeListener!: () => void;
   private moveMouseListener!: (event: MouseEvent) => void;
@@ -50,36 +58,52 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     return this.isCollapsed();
   }
 
+  public setCollapse(collapse: boolean): void {
+    if (collapse) {
+      this.previousWidthValue = this.currentWidth();
+      this.currentWidth.set(this.minWidthValue);
+    } else {
+      this.currentWidth.set(this.previousWidthValue);
+    }
+
+    this.updateCurrentWidthPercentage();
+    this.isCollapsed.set(collapse);
+  }
+
   private onResizeTrigger(): void {
-    
+    // Update MinMax Values
+    this.calculateMaxMinWidthValues();
+
+    // Calculate new Width and set to signal
     const screenWidth = window.innerWidth;
-
-    const newWidth = (this.currentWidthPercentage / 100 ) * screenWidth;
-
+    const newWidth = (this.currentWidthPercentage / 100) * screenWidth;
     this.currentWidth.set(newWidth);
+    this.previousWidthValue = this.currentWidth();
   }
 
   private firstDraw(): void {
-    const screenWidth = window.innerWidth;
-    const newWidth = (this.MaxWidth / 100) * screenWidth;
-
-    this.currentWidth.set(newWidth);
+    this.calculateMaxMinWidthValues();
+    this.setCollapse(false);
+    this.currentWidth.set(this.maxWidthValue);
+    this.previousWidthValue = this.currentWidth();
   }
 
-  private updateCurrentWidthPercentage()
-  {
+  private calculateMaxMinWidthValues() {
     const screenWidth = window.innerWidth;
-    const newPercentage = ( 1 - ( (screenWidth - this.currentWidth()) / screenWidth) ) * 100;
 
-    this.currentWidthPercentage = Math.round( newPercentage * 100 ) / 100;  
+    this.maxWidthValue = (this.MaxWidth / 100) * screenWidth;
+    this.minWidthValue = (this.MinWidth / 100) * screenWidth;
+  }
+
+  private updateCurrentWidthPercentage() {
+    const screenWidth = window.innerWidth;
+    const newPercentage = (1 - (screenWidth - this.currentWidth()) / screenWidth) * 100;
+
+    this.currentWidthPercentage = Math.round(newPercentage * 100) / 100;
   }
 
   private isCurrentWidthMinimum(): boolean {
-    
-    const screenWidth = window.innerWidth;
-    const sideBarWidthPercentage = ( 1 - ( (screenWidth - this.currentWidth()) / screenWidth) ) * 100;
-    
-    return ( Math.round( sideBarWidthPercentage * 100 ) / 100 )  <= this.MinWidth;
+    return this.currentWidth() <= this.minWidthValue;
   }
 
   // =========================
@@ -117,15 +141,20 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     const clampedWidth = Math.min(Math.max(newWidth, minPx), maxPx);
 
     this.currentWidth.set(clampedWidth);
+    this.previousWidthValue = this.currentWidth();
   }
 
   onMouseUp() {
-    
     this.updateCurrentWidthPercentage();
-
-    // console.log( this.IsCollapsed );
-
     this.isDragging = false;
+
+    this.isCollapsed.set(this.isCurrentWidthMinimum() ? true : false);
+
+    // console.log( {
+    //   "isCollapse": this.isCollapsed(),
+    //   "minWidthValue": this.minWidthValue,
+    //   "currentWidth": this.currentWidth()
+    // } );
     document.removeEventListener('mousemove', this.moveMouseListener);
     document.removeEventListener('mouseup', this.upMouseListener);
   }
