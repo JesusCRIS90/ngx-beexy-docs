@@ -1,5 +1,5 @@
 <div class="bee-sidebar-layout">
-  <aside class="bee-sidebar" [style.width]="sidebarWidth">
+  <aside class="bee-sidebar" [class.no-transition]="isDragging" [style.width]="sidebarWidth">
     <ng-content select="[sidebar]" />
 
     <!-- Drag Handle -->

@@ -1,12 +1,18 @@
 import {
   Component,
-  computed,
+  effect,
   Input,
   OnDestroy,
   OnInit,
+  output,
   signal,
   ViewEncapsulation,
 } from '@angular/core';
+
+export interface SidebarLayoutState {
+  width: number;
+  isCollapsed: boolean;
+}
 
 @Component({
   selector: 'bee-sidebar-layout',
@@ -20,13 +26,16 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   @Input() MaxWidth: number = 30;
   @Input() MinWidth: number = 10;
 
+  // --- OUTPUT that emits sidebar status ---
+  sidebarWidthChange = output<SidebarLayoutState>();
+
   currentWidth = signal<number>(0);
   isCollapsed = signal<boolean>(false);
 
   private currentWidthPercentage = this.MaxWidth;
   private previousWidthValue = 0;
 
-  private isDragging = false;
+  protected isDragging = false;
   private mouseFirstClick_X = 0;
   private onClickMouseFirstWidth = 0;
   private maxWidthValue: number = 0;
@@ -50,11 +59,11 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     document.removeEventListener('mouseup', this.upMouseListener);
   }
 
-  get sidebarWidth() {
+  public get sidebarWidth() {
     return `${this.currentWidth()}px`;
   }
 
-  get IsCollapsed(): boolean {
+  public get IsCollapsed(): boolean {
     return this.isCollapsed();
   }
 
@@ -68,6 +77,7 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
 
     this.updateCurrentWidthPercentage();
     this.isCollapsed.set(collapse);
+    this.triggerSudebarState();
   }
 
   private onResizeTrigger(): void {
@@ -79,6 +89,15 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     const newWidth = (this.currentWidthPercentage / 100) * screenWidth;
     this.currentWidth.set(newWidth);
     this.previousWidthValue = this.currentWidth();
+
+    this.triggerSudebarState();
+  }
+
+  private triggerSudebarState() {
+    this.sidebarWidthChange.emit({
+      width: this.currentWidth(),
+      isCollapsed: this.isCollapsed(),
+    });
   }
 
   private firstDraw(): void {
@@ -86,6 +105,7 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     this.setCollapse(false);
     this.currentWidth.set(this.maxWidthValue);
     this.previousWidthValue = this.currentWidth();
+    this.triggerSudebarState();
   }
 
   private calculateMaxMinWidthValues() {
@@ -149,12 +169,8 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     this.isDragging = false;
 
     this.isCollapsed.set(this.isCurrentWidthMinimum() ? true : false);
+    this.triggerSudebarState();
 
-    // console.log( {
-    //   "isCollapse": this.isCollapsed(),
-    //   "minWidthValue": this.minWidthValue,
-    //   "currentWidth": this.currentWidth()
-    // } );
     document.removeEventListener('mousemove', this.moveMouseListener);
     document.removeEventListener('mouseup', this.upMouseListener);
   }

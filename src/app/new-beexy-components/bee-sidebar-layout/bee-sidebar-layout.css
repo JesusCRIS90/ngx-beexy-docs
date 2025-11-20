@@ -7,7 +7,7 @@
   .bee-sidebar {
     background: #f4f4f4;
     border-right: 1px solid #ddd;
-    /* transition: width 0.15s ease; */
+    transition: width 0.5s ease;
     position: relative;
     display: flex;
     flex-direction: column;
@@ -22,7 +22,7 @@
       cursor: col-resize;
 
       background: transparent;
-      transition: background 0.2s;
+      transition: background 0.25s;
     }
 
     .bee-resize-handle:hover {
@@ -35,4 +35,8 @@
     background: #fff;
     overflow-y: auto;
   }
+}
+
+.no-transition {
+  transition: none !important;
 }
