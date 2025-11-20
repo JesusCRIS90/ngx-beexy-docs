@@ -1,4 +1,9 @@
-<bee-sidebar-layout class="custom-sidebar-1" [MaxWidth]="30" [MinWidth]="10">
+<bee-sidebar-layout 
+  class="custom-sidebar-1" 
+  [MaxWidth]="30" 
+  [MinWidth]="10"
+  (sidebarWidthChange)="onSidebarChange($event)"
+  >
   <div sidebar>
     <h3>Sidebar</h3>
     <p>Navigation or menu here.</p>
