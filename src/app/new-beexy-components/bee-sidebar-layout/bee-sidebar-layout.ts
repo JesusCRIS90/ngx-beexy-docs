@@ -47,6 +47,7 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
   private upMouseListener!: () => void;
 
   ngOnInit(): void {
+    this.checkMinMax();
     this.firstDraw();
 
     // Listen for resize
@@ -108,6 +109,13 @@ export class BeeSidebarLayout implements OnInit, OnDestroy {
     this.currentWidth.set(this.maxWidthValue);
     this.previousWidthValue = this.currentWidth();
     this.triggerSudebarState();
+  }
+
+  private checkMinMax(){
+    if (this.MinWidth > this.MaxWidth){
+      this.MinWidth = this.MaxWidth;
+      console.warn("MaxWidth must be greater than MinWidth");
+    }
   }
 
   private calculateMaxMinWidthValues() {
